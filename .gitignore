@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build and test output
+_lab/
+_probe/
+*.log
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local install leftovers (install.ps1 writes these into the DSH profile, not here,
+# but a stray run from the repository root would land here)
+*.bak-route-balance-*
+*.bak-uninstall-*
+*.tgz
+*.tmp-*
+work/
+.tmp/
+.codex-test/
+*.dsh-route-balance.json
+*.dsh-route-balance.lock

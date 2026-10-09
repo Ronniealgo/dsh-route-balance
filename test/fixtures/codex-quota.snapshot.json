@@ -1,0 +1,13 @@
+{
+  "generated": "2026-09-30T14:23:15.883Z",
+  "source": "codex app-server: account/rateLimits/read (recorded fixture)",
+  "accountPlan": "plus",
+  "pools": {
+    "codex": {
+      "fiveHour": { "used": "2%", "window": "5h", "resetsAt": 1790783620 },
+      "weekly": { "used": "100%", "window": "168h", "resetsAt": 1791047425 },
+      "credits": { "hasCredits": false, "unlimited": false, "balance": "0" }
+    }
+  },
+  "resetCredits": { "availableCount": 1 }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "dsh-route-balance",
+  "version": "0.6.2",
+  "description": "Display configured API-route balances and ChatGPT/Codex quota in the DeepSeek Harness sidebar through an authenticated local route.",
+  "keywords": ["deepseek-harness", "dsh", "dsh-plugin", "balance", "quota", "sidebar"],
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": { ".": "./lib/index.js", "./client": "./lib/client.js", "./core": "./lib/core.js", "./package.json": "./package.json" },
+  "files": [
+    "lib/index.js", "lib/client.js", "lib/core.js", "lib/registry.js", "lib/codex.js", "lib/codex-entry.js",
+    "cordis.patch.yml", "install.ps1", "tools/install-state.mjs", "tools/patch-check.mjs", "tools/codex-quota.mjs",
+    "README.md", "CHANGELOG.md", "LICENSE", "SECURITY.md"
+  ],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node tools/build-client.mjs",
+    "check": "node tools/build-client.mjs --check && node tools/check-package.mjs && node tools/check-source.mjs",
+    "test": "node tools/run-tests.mjs",
+    "test:live": "node tools/verify-live.mjs",
+    "prepublishOnly": "node tools/build-client.mjs --check && node tools/check-package.mjs && node tools/check-source.mjs && node tools/run-tests.mjs"
+  },
+  "repository": { "type": "git", "url": "git+https://github.com/Ronniealgo/dsh-route-balance.git" },
+  "bugs": { "url": "https://github.com/Ronniealgo/dsh-route-balance/issues" },
+  "homepage": "https://github.com/Ronniealgo/dsh-route-balance#readme",
+  "publishConfig": { "access": "public" },
+  "peerDependencies": { "@deepseek-ai/cordis": "~4.0.4", "react": "^18.2.0" },
+  "peerDependenciesMeta": { "@deepseek-ai/cordis": { "optional": true }, "react": { "optional": true } },
+  "dsh": {
+    "bundle": { "patch": "cordis.patch.yml" },
+    "client": { "inject": ["@deepseek-ai/dsh-client-ui-renderer"], "platform": "web" },
+    "engines": { "dsh": ">=0.2.0-rc.2" }
+  }
+}

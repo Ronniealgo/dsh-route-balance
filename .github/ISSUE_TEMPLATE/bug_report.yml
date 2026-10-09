@@ -1,0 +1,61 @@
+name: Bug report
+description: Something looks wrong in the sidebar figure or the tooltip
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not paste credentials, tokens, session ids or full account ids.
+        The balance value itself is fine to quote.
+  - type: input
+    id: dsh-version
+    attributes:
+      label: DSH version
+      description: Settings → About, or the installer file name
+      placeholder: 0.2.0-rc.2
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: From the plugin list, or `package.json`
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which surface
+      options:
+        - Sidebar figure (wrong or missing amount)
+        - Tooltip text
+        - Nothing renders at all
+        - Console error at startup
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expect
+    attributes:
+      label: What you expected, and what you saw
+      description: Include the Settings → Account balance if it differs from what the widget shows
+    validations:
+      required: true
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output from the plugin
+      description: Lines that start with `[dsh-route-balance]`, plus any startup-audit error naming this package
+      render: text
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before filing
+      options:
+        - label: I restarted DSH after installing or updating the plugin
+          required: true
+        - label: I checked that the same figure appears in Settings → Account
+          required: false

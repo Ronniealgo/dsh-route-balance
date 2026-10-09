@@ -1,0 +1,9 @@
+# The generated bundle is compared byte for byte against the sources by
+# `tools/build-client.mjs --check`, so text files must keep LF endings on every
+# platform. Without this, a Windows checkout with core.autocrlf=true rewrites
+# lib/client.js to CRLF and the check fails on a clean tree.
+* text=auto eol=lf
+
+# Keep binary-ish fixtures binary.
+*.png binary
+*.ico binary

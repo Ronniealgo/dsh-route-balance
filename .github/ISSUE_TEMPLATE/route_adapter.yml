@@ -1,0 +1,48 @@
+name: Route adapter request
+description: Ask for (or offer) balance support for another API route
+labels: [route-adapter]
+body:
+  - type: input
+    id: provider
+    attributes:
+      label: Route / provider
+      description: The DSH provider id, e.g. `openrouter` or `zhipu-glm`
+      placeholder: openrouter
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: Balance endpoint
+      description: The API that returns the balance, with a docs link if one exists
+      placeholder: GET https://openrouter.ai/api/v1/credits
+    validations:
+      required: false
+  - type: dropdown
+    id: auth
+    attributes:
+      label: What does the endpoint need
+      options:
+        - Nothing (public)
+        - An API key stored in DSH credentials
+        - An OAuth / session token
+        - Unknown
+    validations:
+      required: true
+  - type: textarea
+    id: answer
+    attributes:
+      label: Example answer (redacted)
+      description: Paste a real (redacted) response body so the adapter can be tested against reality
+      render: json
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I can open a PR for this adapter
+          required: false
+        - label: I understand an API-key route needs host-half code so the key never reaches the browser
+          required: true

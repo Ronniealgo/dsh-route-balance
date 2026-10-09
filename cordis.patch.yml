@@ -1,0 +1,7 @@
+# Host: authenticated Connection Fetch route; client: sidebar balances/quota.
+- insert:
+    - id: route-balance
+      name: "dsh-route-balance"
+      config:
+        slot: sidebar.footer.action
+        refreshMs: 300000

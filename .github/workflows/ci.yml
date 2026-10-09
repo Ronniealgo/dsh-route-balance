@@ -1,0 +1,30 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      # Test-only YAML parser for synthetic DSH profiles; not a runtime dependency.
+      - name: Prepare installer test parser
+        run: npm install --no-save --ignore-scripts --legacy-peer-deps --package-lock=false yaml@2.9.1
+      - name: Generated artifact and release identity
+        run: npm run check
+      - name: Guarded offline regression, including actual pack and import
+        run: npm test
+      - name: Syntax
+        run: node --check lib/client.js && node --check lib/index.js && node --check lib/codex.js

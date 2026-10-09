@@ -1,0 +1,66 @@
+dsh-route-balance — release candidate manifest
+version: 0.6.2
+baseline: 176c93c + local audit-fixes worktree
+acceptance: 160/160 pass, 0 failed/cancelled/skipped; 14 suites
+platform: win32, Node v24.19.0
+scope: isolated fixtures and installed DSH library integration, not real GUI deployment
+integrity: SHA256 file checks, not a digital signature or author-identity proof
+MANIFEST.txt and the verification report are excluded from their own source hash list.
+
+sha256                                                              bytes  path
+e9e933913925e8bfdfd4b9fe7179369b0ed1189a0a74d5a6b1f53f81de578e5b       372  .gitattributes
+240a7a90c8b548123c45154f9ff7f8bc116ccff51cad4ea6a68b67c31bcce9da      1799  .github/ISSUE_TEMPLATE/bug_report.yml
+637dfbbf2acaa4afa82438bfa5e2bf00eb5b861d18da5b30adc8e67a4b72b8f7       250  .github/ISSUE_TEMPLATE/config.yml
+67b5e294912f24ec6e5a5c1e568eeef0c4ce884e535a15a92f97f4f1a66886b1      1433  .github/ISSUE_TEMPLATE/route_adapter.yml
+2e8eb79483316aa4bf49e184c6797951ce6ac372ed71b159795cf87b848a22cd       903  .github/PULL_REQUEST_TEMPLATE.md
+15970a8d0448395ba353b3246936b4a650875e29d7f61d8f415f68e609fb9d94       948  .github/workflows/ci.yml
+382f554364ea6dc435058c7439575136679fad02e8c0c4a3815b8cc065d413f2       413  .gitignore
+51f723c99d7381e2c34dcdb53315e32a19d50490d9cd74d25754d66cd1b010ec      2575  AGENTS.md
+75c8a1b1c9a09dc2db66948cd88a24aae03cd0e08915dd240781b657685b6791      4659  CHANGELOG.md
+f8938d299f19bbe81a79dc777e6404710a87f0f7c2ed7609b5ebcf0f0f9a96b5      2830  CONTRIBUTING.md
+dea8082e566910b6fa7a94eab1f9c59d08c4d9e564dee09e27c7100a44633ae2      1087  LICENSE
+65885666516fa06ecbed8138279921e5e6b5daee94a9ecf1d1741cf579b4855f      7464  README.md
+f25571dbcb9c9ca9808fe85658179c9db5550f59271ef87c7ccbf422a0a7db39      4765  SECURITY.md
+ed0b37cecb840296f95614843fd9923777a9a217531cf7b544493129fa7cb6bb       220  cordis.patch.yml
+033be6c639e0b153405e24a54c06071880fd62b35b73208efa3452561d412f82      3959  docs/HANDOFF-VERIFICATION.md
+02680f4e6e3759b1006d97a0aab61580279fc7bf6263c4cdcf9649b868b43753      4757  docs/PLUGIN-ANATOMY.md
+2f47ee049f171fd4777e8b1d71398f7d2a785c6de4422428fec1c2b72a267d14      3760  docs/PUBLISHING.md
+eded5f72f314fe3c47935d6b8929987ff0dc0afcb7237a67db0132d77d855573       524  install.ps1
+57d15d93a995960a082ddcd681f12a433e66b8b7846f9a7ebc2487da897e81aa     29391  lib/client.js
+48a658fa08ee3a83270958bfbd5deeade4fdab08c69db6ac1da3157a6809c255      4428  lib/codex-entry.js
+e14f714bf13e463d57c2b4a4f10f2a7670abfcad8afef5ba581ccede7d7411ca     18989  lib/codex.js
+dde3b52b0ce9699504b937e08a58b2a5cc455214045e05be7aace444375a49bf      6698  lib/core.js
+6d47e48efe05178b7f0edfe2b33b7f1dae4be2400ad7dba69bddd6cf7374e80c     14906  lib/index.js
+ca2f744ce7abc652667d24b64400f55dfb656b2040cf5265b02bff43f8c785d6     12690  lib/registry.js
+44cc670548ae737ef7434fa7d5bec6f315b1690d9abec09ae0ed097b6e8038a9      1667  package.json
+6a13ea654abe4a981a812525183d6fb71c768ca105bbc72aca3382bb3abd7518     10115  src/client.bundle.js
+ff6083c505a0878ccbaa0480d0a36f3e940fc720a7ee59ddfae913f026f3296f     12403  test/client-regressions.test.mjs
+7b50a4807af8f86dba20c39727e6c9b26a013090d60e779cbe015afca5b754b9     21653  test/client.test.mjs
+deaeb644e1ba46c8b6a29d2e29d122c8e8d058dddd33278e5ef66669cb5a8884      3885  test/codex-shim.test.mjs
+2aa550a5958b1df23a8b27526870e65b1d3e76e0c9430afc3e39bbdb6d9dffe9     12842  test/codex.test.mjs
+42c3b291aa8d813f4e5de04709e4b1aef71989615158e308d15aef424118aea1      2598  test/diagnostics.test.mjs
+b0d609803b7c6d052d056d6fc21f23706f63f08a1f7acdd8ce9641eae7907809       460  test/fixtures/codex-quota.snapshot.json
+e5cf83f48c3009a34d3c59afebbec3807b5591ba523bea5072ecff76d579d3cb      2009  test/helpers.mjs
+8212c423e4ac65642df89735ff5c7a8d3c5e926dc9c9706357e870072dc17143      5544  test/host-auth.integration.test.mjs
+872f3852b8b7730cd4cc62546bd8a85ce3804e96a007730f3b7a0a2985913610      4906  test/host-providers.test.mjs
+e52febe0ee6f8ec229576119a15916353db2ad6eafb1ce6e2341d061c3a057d2      9298  test/host.test.mjs
+7e71fb33edc45ed937df551cd20ecabcb35f69e84fe1bc1229dd4fed742c77cb      6373  test/install.test.mjs
+d256a4df7832c544158fff32e61dfe05ce07804e3dd76ed28b9fed65200332d8      1590  test/local-diagnostics.test.mjs
+a387df9fb19f01d3df1e7c82864fce652881a05dd135b86159ad1ff4e2bc2ca7     15800  test/package.test.mjs
+4662d46b7d8b00093ded83efe4904ff3d84d6f92cc25a6c1aecc53bcccdb90f8      5226  test/release-regressions.test.mjs
+365cfa1caf8a7668007def64c228f4aaddcf09928b26c367a60baebe2e01bc50      2325  test/source-archive.test.mjs
+369e955e0022551c95cdf6bba1a8a06c6fac42c3a75e68126aa655b1de668b7e      6249  test/test-runner.test.mjs
+6af77c7b978223dfef6668c3e89e19752697ec1ca132258f18467c7c14cc717a       730  tools/balance-probe.mjs
+98fff6d515d5d843b79372f68a3f375da9da56da99e326feefc53584738c3d66      1109  tools/bridge-probe.mjs
+8138764f1fbf3325f245f5628d70152bfcae0360819009a6b742f49622ea8086      3494  tools/build-client.mjs
+76546927b5d8a3a7d892cde595c9a91cffaec2b578959155220f0bf4f0e7dcca     15377  tools/check-package.mjs
+97e1066c8651aaecfa592cf015ef6d3597ecf594841bbdd68ee1aea8950584f6      2298  tools/check-source.mjs
+89cab3642a138bdccde7a058fcff65e12f1b347a227ae9bd94e06f44be1f048f      2878  tools/codex-quota.mjs
+b955fa7b5c5a5087ef6a70a5207b231e0b33d6abc86874ca48d20f827b383b89     10975  tools/fake-runtime.mjs
+af5654f730c27f524ebf95b81df395c10bbf76c83fcec11490612a75aa41d8a2      9171  tools/install-state.mjs
+4fdc9c63ed825df99048dd44f20f3c1496f4bec52d75f3fc41d9b7d8c9a6000e      2831  tools/offline-guard.cjs
+fc9bced7eb527c770abc174948cf5259c79fd98b9da40ce7c3ac936b791b3d7a      1413  tools/patch-check.mjs
+385aeb4bd82b228f4072dd0e70cd89e2f471f8c9764451f914ec60c204f7b6e2      2048  tools/release-files.mjs
+3161dc6bb5777ca1f12ab2b1b623ac28611628de641a70c5162130040e0bafec      1203  tools/routes-inventory.mjs
+87aa8eaa8d9262ebeb98e0306ea320bd5937fb17f9c9281ce5f062a7a4d82f11      5798  tools/run-tests.mjs
+4be3c4888ec5a0567036cca2d0bff9832241d51f5171770a868d94b22ba160de      3458  tools/verify-live.mjs

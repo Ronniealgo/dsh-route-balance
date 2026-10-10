@@ -1,8 +1,12 @@
-# dsh-route-balance
+# 各个模型厂商/中转 实时显示账户余额插件
 
-**0.6.2 实验版**：在 DeepSeek Harness 的侧边栏显示配置过的 API 路线余额和 ChatGPT/Codex 订阅剩余额度。
+`dsh-route-balance` · DeepSeek Harness（DSH）侧边栏插件 · **0.6.2 实验版**
 
-> **实验候选（pre-release）**：公开仓库目标是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.2 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。既未被插件市场收录，也没有 DSH 官方背书，不挂未经核实的徽章。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化。
+在 DSH 侧边栏直接显示各条 API 路线（模型厂商与中转站）的账户余额，以及 ChatGPT/Codex 订阅的剩余额度。
+
+> **实验候选（pre-release）**：公开仓库是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.2 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化；不挂未经核实的徽章。
+>
+> **上架状态（2026-10-10 核对）**：已收录进 DSH 插件市场 —— 市场首页 <https://dsh.market/>，本插件页 <https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance>。市场数据来自社区目录 [api.dshmk.com](https://api.dshmk.com/)，该目录把本仓库标为 `verified`（等级 4：结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录和“已验证”都是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**。
 
 示例（演示数字，不是本轮真实账户读数）：
 
@@ -25,18 +29,24 @@
 
 运行时库已经在本版本仓库里生成好，**不需要**先 build、也不需要安装测试专用 YAML 解析器就能使用（开发与测试才需要，见 [开发与验收](#开发与验收)）。
 
+### 从插件市场安装
+
+打开 [DSH 插件市场](https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance) 的插件页，按提示确认信任后点安装；市场执行的命令与下面的等价。市场页显示的名称、收录状态、评分和安装命令由市场自己维护，以页面实际显示为准。
+
+### 从命令行安装
+
 按实际使用的 profile **选择一条**安装命令，不要两条都执行。
 
-### DSH 桌面版
+#### DSH 桌面版
 
 ```bash
-dsh plugin --profile desktop add "github:Ronniealgo/dsh-route-balance#v0.6.2"
+dsh plugin --profile desktop add github:Ronniealgo/dsh-route-balance#v0.6.2
 ```
 
-### DSH Web
+#### DSH Web
 
 ```bash
-dsh plugin --profile web add "github:Ronniealgo/dsh-route-balance#v0.6.2"
+dsh plugin --profile web add github:Ronniealgo/dsh-route-balance#v0.6.2
 ```
 
 两条命令只选择 profile，不影响插件行为；不确定自己是哪一类就先看 DSH 的 profile 名称再执行。`#v0.6.2` 是固定标签，换版本时必须显式改写。
@@ -153,7 +163,7 @@ node tools/run-tests.mjs
 - **已验证**：160 项测试在 Windows / Node 24 的隔离环境通过，覆盖官方库、合成认证与真实合成进程；这些测试不触真实 GUI，不触真实供应商账户。
 - **实机范围仍未验证**：真实浏览器图形界面渲染、真实 DSH 安装与真实供应商账户读数尚未验证。
 - **跨平台结果单独看 CI**：CI 文件定义 Windows 与 Ubuntu × Node 20/22/24 矩阵；当前源码 SHA 的执行结果请查看 [GitHub Actions](https://github.com/Ronniealgo/dsh-route-balance/actions)。本地 Windows/Node 24 的通过不替代其它环境的结果。
-- 本仓库未声明已被任何插件市场收录，也没有 DSH 官方背书。
+- **市场收录**：已收录进 [DSH 插件市场](https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance)（数据源为社区目录 [api.dshmk.com](https://api.dshmk.com/)；2026-10-10 核对时该目录把本仓库标为 `verified` 等级 4，结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录与“已验证”是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**；市场页面的实际显示以市场为准。
 
 ## 许可证
 

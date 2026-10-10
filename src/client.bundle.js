@@ -217,17 +217,19 @@ window.__ModuleLoader__.load({
               const entries = (snapshot?.entries ?? []).filter((e) => e && (e.kind === "ready" || e.kind === "loading"));
               const groups = [];
               for (const e of entries) {
+                const label = String(e.label ?? e.id ?? "").trim();
+                const prefix = label ? label + "：" : "";
                 const rows = [];
                 if (e.kind === "loading") {
-                  rows.push("读取中…");
+                  rows.push(prefix + "读取中…");
                 } else if (e.amounts?.length) {
                   for (const a of e.amounts) {
                     const v = (a.text ?? "").trim();
-                    if (v) rows.push(v);
+                    if (v) rows.push(prefix + v);
                   }
                 } else {
                   const v = (e.short ?? e.summary ?? "").trim();
-                  if (v) rows.push(v);
+                  if (v) rows.push(prefix + v);
                 }
                 if (rows.length) groups.push(rows);
               }

@@ -1,12 +1,14 @@
 # 各个模型厂商/中转 实时显示账户余额插件
 
+[![DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-zh.svg)](https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance)
+
 `dsh-route-balance` · DeepSeek Harness（DSH）侧边栏插件 · **0.6.2 实验版**
 
 在 DSH 侧边栏直接显示各条 API 路线（模型厂商与中转站）的账户余额，以及 ChatGPT/Codex 订阅的剩余额度。
 
-> **实验候选（pre-release）**：公开仓库是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.2 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化；不挂未经核实的徽章。
+> **实验候选（pre-release）**：公开仓库是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.2 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化。徽章只挂 DSH Market 官方收录标识（由市场提供），不挂其它未经核实的徽章。
 >
-> **上架状态（2026-10-10 核对）**：已收录进 DSH 插件市场 —— 市场首页 <https://dsh.market/>，本插件页 <https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance>。市场数据来自社区目录 [api.dshmk.com](https://api.dshmk.com/)，该目录把本仓库标为 `verified`（等级 4：结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录和“已验证”都是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**。
+> **上架状态（2026-10-10 核对）**：已收录进 DSH 插件市场 —— 市场首页 <https://dsh.market/>，本插件页 <https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance>。收录提交单 [issue 218](https://github.com/2BingLing/dsh-market/issues/218) 已由市场按“已收录”办结（2026-10-10）。市场数据来自社区目录 [api.dshmk.com](https://api.dshmk.com/)，该目录把本仓库标为 `verified`（等级 4：结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录和“已验证”都是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**。
 
 示例（演示数字，不是本轮真实账户读数）：
 

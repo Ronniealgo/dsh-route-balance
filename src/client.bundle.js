@@ -214,11 +214,27 @@ window.__ModuleLoader__.load({
           "data-state": state,
           title: (() => {
             try {
-              const filtered = (snapshot?.entries ?? []).filter((e) => e && (e.kind === "ready" || e.kind === "loading"));
-              const entries = filtered.length ? filtered : (snapshot?.entries ?? []).filter(Boolean);
-              return detailLines({ ...snapshot, entries }).join("\n");
+              const entries = (snapshot?.entries ?? []).filter((e) => e && (e.kind === "ready" || e.kind === "loading"));
+              const groups = [];
+              for (const e of entries) {
+                const rows = [];
+                if (e.kind === "loading") {
+                  rows.push("读取中…");
+                } else if (e.amounts?.length) {
+                  for (const a of e.amounts) {
+                    const v = (a.text ?? "").trim();
+                    if (v) rows.push(v);
+                  }
+                } else {
+                  const v = (e.short ?? e.summary ?? "").trim();
+                  if (v) rows.push(v);
+                }
+                if (rows.length) groups.push(rows);
+              }
+              if (!groups.length) return "无可用余额";
+              return groups.map((g) => g.join("\n")).join("\n\n");
             } catch {
-              return lines.join("\n");
+              return "余额显示异常";
             }
           })(),
           "aria-label": "余额 " + text,

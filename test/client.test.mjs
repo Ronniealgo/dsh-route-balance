@@ -420,9 +420,9 @@ test('bundle: registers the sidebar slot and renders every readable route', asyn
     const button = view.current.nodes.find((node) => node.tagName === 'BUTTON');
     assert.equal(button.attributes['data-state'], 'ready');
     assert.deepEqual(view.current.text, ['¥16.14 · $13.14 · ¥0.10'], 'the Remote route and the host routes share one figure');
-    assert.match(button.attributes.title, /DeepSeek 账号：¥16\.14/);
-    assert.match(button.attributes.title, /OpenRouter：\$13\.14/);
-    assert.match(button.attributes.title, /Zhipu GLM：¥0\.10/);
+    assert.match(button.attributes.title, /¥16\.14/);
+    assert.match(button.attributes.title, /\$13\.14/);
+    assert.match(button.attributes.title, /¥0\.10/);
     assert.ok(requested.some((url) => url.includes('/api/dsh-route-balance/balances')), 'the widget asks the host for the other routes');
 
     for (const cleanup of view.current.cleanups) cleanup();

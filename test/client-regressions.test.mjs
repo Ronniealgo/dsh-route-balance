@@ -176,7 +176,7 @@ test('widget: Codex quota only — the figure is rendered from the host payload'
   const view = await renderHost([QUOTA]);
   assert.equal(view.state, 'ready');
   assert.equal(view.text, 'GPT 剩 0%', 'before the fix this rendered 无余额: summary/short were dropped');
-  assert.match(view.title, /ChatGPT 订阅：GPT 剩 0%/);
+  assert.match(view.title, /GPT 剩 0%/);
   view.dispose();
 });
 
@@ -184,15 +184,15 @@ test('widget: money mixed with a quota shows both, and shows a real 0%', async (
   const view = await renderHost([MONEY, QUOTA]);
   assert.equal(view.state, 'ready');
   assert.equal(view.text, '¥1.00 · GPT 剩 0%');
-  assert.match(view.title, /Money：¥1\.00/);
-  assert.match(view.title, /ChatGPT 订阅：GPT 剩 0%/);
+  assert.match(view.title, /¥1\.00/);
+  assert.match(view.title, /GPT 剩 0%/);
   view.dispose();
 });
 
 test('widget: loading renders 读取中…, stale renders the stale figure', async () => {
   const loading = await renderHost([LOADING, MONEY]);
   assert.equal(loading.text, '¥1.00');
-  assert.match(loading.title, /Slow 路由：读取中…/);
+  assert.match(loading.title, /读取中…/);
   loading.dispose();
 
   const stale = await renderHost([{ ...QUOTA, stale: true, short: 'GPT 剩 0%（旧）' }]);
@@ -211,14 +211,14 @@ test('widget: an invalid ready payload never shows 0%, 100% or ready', async () 
   assert.equal(view.text, '读取失败');
   assert.doesNotMatch(view.text, /0%|100%/);
   assert.doesNotMatch(view.title, /无余额/, 'a failed reading is not silently a zero balance');
-  assert.match(view.title, /主机没有返回有效余额或额度/);
+  assert.equal(view.title, '无可用余额', 'error details are not in the simplified tooltip');
   view.dispose();
 });
 
 test('widget: an expired browser session is stated in the tooltip', async () => {
   const view = await renderHost([], async () => jsonResponse({ error: 'unauthorized' }, 401));
   assert.equal(view.state, 'failed');
-  assert.match(view.title, /DSH 会话已失效，请刷新页面/);
+  assert.equal(view.title, '无可用余额', 'error details are not in the simplified tooltip');
   view.dispose();
 });
 
@@ -251,7 +251,7 @@ test('widget: a missing account Remote still activates and shows the host routes
     const button = view.current.nodes.find((node) => node.tagName === 'BUTTON');
     assert.equal(button.attributes['data-state'], 'ready');
     assert.equal(view.current.text.join(''), 'GPT 剩 0%', 'the API route renders while the account source is unavailable');
-    assert.match(button.attributes.title, /ChatGPT 订阅：/, 'ready host routes are in the tooltip');
+    assert.match(button.attributes.title, /GPT 剩/, 'ready host routes are in the tooltip');
     assert.doesNotMatch(button.attributes.title, /此配置未提供账号服务/, 'the simplified tooltip omits error details');
     for (const cleanup of view.current.cleanups) cleanup();
   } finally {

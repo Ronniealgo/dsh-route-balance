@@ -300,7 +300,8 @@ test('manifest: declares the client half the shipped module system needs', () =>
   assert.equal(pkg.exports['./client'], './lib/client.js');
   assert.equal(pkg.exports['./core'], './lib/core.js');
   assert.equal(pkg.dsh.client.platform, 'web');
-  assert.deepEqual(pkg.dsh.client.inject, ['@deepseek-ai/dsh-client-ui-renderer']);
+  assert.deepEqual(pkg.dsh.client.inject, ['@deepseek-ai/dsh-client-connection', '@deepseek-ai/dsh-client-ui-renderer']);
+  assert.equal(pkg.dsh.client.immediately, true, 'the shell activates a browser half at page start only when this is set');
   assert.equal(pkg.dsh.bundle.patch, 'cordis.patch.yml');
   assert.equal(pkg.license, 'MIT');
   assert.match(pkg.dsh.engines.dsh, /^>=/);
@@ -317,7 +318,11 @@ test('bundle: registers exactly the package name the module system resolves', ()
 });
 
 test('bundle: declares its injected services and exports apply/inject', () => {
-  assert.match(bundleSource, /const inject = \["slots", "remote"\]/);
+  // `slots` is the only hard dependency. A browser half whose injected service
+  // never appears stays pending forever and logs nothing, which is how the
+  // published 0.6.2 kept its seat empty.
+  assert.match(bundleSource, /const inject = \["slots"\]/);
+  assert.doesNotMatch(bundleSource, /const inject = \["slots", "remote"\]/);
   assert.match(bundleSource, /exports\.apply = apply;/);
   assert.match(bundleSource, /exports\.inject = inject;/);
 });
@@ -328,7 +333,7 @@ test('bundle: requires only platform modules the shell can resolve', () => {
   const exports = environment.factory();
   assert.deepEqual(environment.requiredExternals, ['react', 'react/jsx-runtime']);
   assert.equal(typeof exports.apply, 'function');
-  assert.deepEqual(exports.inject, ['slots', 'remote']);
+  assert.deepEqual(exports.inject, ['slots']);
   assert.equal(environment.styles.length, 1, 'the widget stylesheet is injected once');
   assert.equal(environment.styles[0].dataset.plugin, PLUGIN_ID);
   assert.match(environment.styles[0].textContent, /\.dshrb-button/);
@@ -452,7 +457,7 @@ test('bundle: a signed-out account still shows the routes the host can read', as
     const button = view.current.nodes.find((node) => node.tagName === 'BUTTON');
     assert.equal(button.attributes['data-state'], 'ready');
     assert.deepEqual(view.current.text, ['$13.14']);
-    assert.match(button.attributes.title, /DeepSeek 账号：未登录（设置 → 账号）/);
+    assert.doesNotMatch(button.attributes.title, /未登录/, 'the simplified tooltip shows balances only');
     for (const cleanup of view.current.cleanups) cleanup();
     fake.dispose();
   } finally {

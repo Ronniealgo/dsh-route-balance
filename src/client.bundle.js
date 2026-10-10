@@ -36,15 +36,27 @@ window.__ModuleLoader__.load({
     const STYLE_ID = "__ID__/balance.css";
     const css = [
       ".dshrb-root{display:flex;min-width:0;max-width:100%}",
-      ".dshrb-button{display:flex;align-items:center;gap:6px;min-height:28px;max-width:100%;padding:3px 8px;",
-      "border:0;border-radius:8px;background:transparent;color:var(--dsw-alias-label-secondary,currentColor);",
-      "font:inherit;font-size:12px;line-height:18px;cursor:pointer;white-space:nowrap}",
+      ".dshrb-button{display:flex;align-items:center;gap:5px;min-height:32px;max-width:100%;padding:4px 10px;",
+      "border:1px solid var(--dsw-alias-border-l2,rgba(127,127,127,.15));border-radius:8px;",
+      "background:var(--dsw-alias-bg-layer-2,transparent);",
+      "color:var(--dsw-alias-label-secondary,currentColor);",
+      "font:inherit;font-size:12px;line-height:18px;cursor:pointer;white-space:nowrap;",
+      "transition:border-color .15s,background .15s}",
+      ".dshrb-button::before{content:'💰 余额';font-size:11px;font-weight:500;",
+      "color:var(--dsw-alias-label-tertiary,#9aa0a6);letter-spacing:.02em;flex:none}",
       ".dshrb-button:hover,.dshrb-button:focus-visible{background:var(--dsw-alias-fill-l1,rgba(127,127,127,.12));",
+      "border-color:var(--dsw-alias-border-l3,rgba(127,127,127,.25));",
       "color:var(--dsw-alias-label-primary,currentColor)}",
       ".dshrb-button:disabled{cursor:default;opacity:.6}",
-      ".dshrb-button[data-state=failed]{color:var(--dsw-alias-state-error-primary,#d4380d)}",
-      ".dshrb-dot{flex:none;width:6px;height:6px;border-radius:999px;background:var(--dsw-alias-label-tertiary,#9aa0a6)}",
-      ".dshrb-value{overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}",
+      ".dshrb-button[data-state=failed]{color:var(--dsw-alias-state-error-primary,#d4380d);",
+      "border-color:var(--dsw-alias-state-error-primary,#d4380d)}",
+      ".dshrb-button[data-state=loading]{opacity:.7}",
+      ".dshrb-dot{flex:none;width:6px;height:6px;border-radius:999px;",
+      "background:var(--dsw-alias-label-tertiary,#9aa0a6)}",
+      ".dshrb-button[data-state=ready] .dshrb-dot{background:var(--dsw-alias-state-success-primary,#52c41a)}",
+      ".dshrb-button[data-state=failed] .dshrb-dot{background:var(--dsw-alias-state-error-primary,#d4380d)}",
+      ".dshrb-value{overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums;",
+      "font-weight:500;color:var(--dsw-alias-label-primary,currentColor)}",
     ].join("");
     if (typeof document !== "undefined" && document.querySelector('style[data-plugin-css="' + STYLE_ID + '"]') === null) {
       const tag = document.createElement("style");
@@ -137,32 +149,79 @@ window.__ModuleLoader__.load({
     //#endregion
 
     //#region component
+    /** Read a store snapshot, tolerating a store that is missing or throwing. */
+    function readSnapshot(store) {
+      try {
+        return typeof store?.getSnapshot === "function" ? store.getSnapshot() : undefined;
+      } catch {
+        return undefined;
+      }
+    }
+
     /** Subscribe one component to the store's external snapshot. */
     function useSnapshot(store) {
-      const [value, setValue] = react.useState(() => store.getSnapshot());
-      react.useEffect(() => store.subscribe(() => setValue(store.getSnapshot())), [store]);
+      const [value, setValue] = react.useState(() => readSnapshot(store));
+      react.useEffect(() => {
+        try {
+          if (typeof store?.subscribe !== "function") return undefined;
+          return store.subscribe(() => setValue(readSnapshot(store)));
+        } catch {
+          // A subscribe that throws (e.g. browser "Illegal invocation") must
+          // not blank the slot entry; the component still renders its first
+          // snapshot and the user sees a readable line.
+          return undefined;
+        }
+      }, [store]);
       return value;
     }
 
     /**
      * The balance control: the live figure of every readable API route, hover
      * for the per-route breakdown, click to read again.
+     *
+     * The shell replaces a slot entry whose component throws with an empty
+     * placeholder and only logs the error on the browser console, so every
+     * derived value is computed defensively: a broken reading must show one
+     * readable line here instead of making the whole control disappear.
      */
     function RouteBalance(props) {
       const store = props.store;
       const snapshot = useSnapshot(store);
-      const lines = detailLines(snapshot);
-      const text = headlineText(snapshot);
-      const onActivate = react.useCallback(() => store.refresh(), [store]);
-      const state = snapshot.loading && snapshot.kind !== "ready" ? "loading" : snapshot.kind;
+      let lines;
+      let text;
+      try {
+        lines = detailLines(snapshot);
+        text = headlineText(snapshot);
+      } catch (error) {
+        text = "余额显示出错";
+        lines = [String(error?.message ?? error)];
+      }
+      const onActivate = react.useCallback(() => {
+        try {
+          const result = store?.refresh?.();
+          if (result && typeof result.catch === "function") result.catch(() => {});
+        } catch {
+          // A refresh failure is reported by the store's own snapshot.
+        }
+      }, [store]);
+      const kind = snapshot?.kind ?? "failed";
+      const state = snapshot?.loading && kind !== "ready" ? "loading" : kind;
       return react_jsx_runtime.jsx("div", {
         className: "dshrb-root",
         children: react_jsx_runtime.jsx("button", {
           type: "button",
           className: "dshrb-button",
           "data-state": state,
-          title: lines.join("\n"),
-          "aria-label": "API 路由余额：" + text + "。" + lines.join("；"),
+          title: (() => {
+            try {
+              const filtered = (snapshot?.entries ?? []).filter((e) => e && (e.kind === "ready" || e.kind === "loading"));
+              const entries = filtered.length ? filtered : (snapshot?.entries ?? []).filter(Boolean);
+              return detailLines({ ...snapshot, entries }).join("\n");
+            } catch {
+              return lines.join("\n");
+            }
+          })(),
+          "aria-label": "余额 " + text,
           onClick: onActivate,
           disabled: state === "loading",
           children: react_jsx_runtime.jsxs(react_jsx_runtime.Fragment, {
@@ -177,38 +236,89 @@ window.__ModuleLoader__.load({
     //#endregion
 
     //#region plugin body
-    /** Client services this plugin needs: the slot registry and the Remote namespace (the account namespace is optional). */
-    const inject = ["slots", "remote"];
+    /**
+     * Client services this plugin needs. Only the slot registry is required:
+     * a client plugin that hard-requires a service the shell does not offer
+     * stays inactive forever and silently, because the activation simply never
+     * runs and nothing is logged. The Remote namespace is therefore read
+     * opportunistically instead — a profile without it still renders every
+     * host-read route.
+     */
+    const inject = ["slots"];
+
+    /** The Remote namespace when the shell provides it; `undefined` is supported. */
+    function remoteService(ctx) {
+      try {
+        if (typeof ctx?.get === "function") return ctx.get("remote");
+      } catch {
+        // A context without the lookup API falls through to the property below.
+      }
+      return ctx?.remote;
+    }
+
+    /**
+     * The Remote namespaces this activation reads, resolved on every access so
+     * a service that appears after activation is still picked up. `accountSource`
+     * already reports an absent namespace as "unavailable" instead of failing.
+     */
+    function remoteFacade(ctx) {
+      return {
+        get account() {
+          return remoteService(ctx)?.account;
+        },
+      };
+    }
+
+    /**
+     * A store that permanently reports one failure. Used when the real store
+     * cannot be constructed at all: the control then says so on screen rather
+     * than leaving an empty slot the user cannot interpret.
+     */
+    function brokenStore(message) {
+      const snapshot = {
+        kind: "failed",
+        loading: false,
+        at: Date.now(),
+        entries: [{ id: PLUGIN_ID, label: "余额", kind: "failed", detail: message, amounts: [], at: Date.now() }],
+      };
+      return {
+        getSnapshot: () => snapshot,
+        subscribe: () => () => {},
+        refresh: async () => snapshot,
+        dispose: () => {},
+      };
+    }
 
     /**
      * Register the balance control into the configured slot (sidebar foot by
      * default) and own the polling store for this plugin activation.
-     * @param ctx - client plugin context carrying `slots` and `remote`.
+     * @param ctx - client plugin context carrying `slots` (and usually `remote`).
      * @param config - this Loader row's config: `{ slot?, refreshMs? }`.
      */
     function apply(ctx, config) {
-      // Fail with a plugin-name-bearing message instead of a bare
-      // "cannot read properties of undefined", which is what a bundle whose
-      // `dsh.client.inject` drifted from its `inject` export looks like in the
-      // shell's startup audit.
-      if (ctx?.slots === undefined || ctx?.remote === undefined) {
-        throw new Error(PLUGIN_ID + ": client plugin services are missing — check `dsh.client.inject` in package.json against the `inject` export in this bundle");
+      if (ctx?.slots === undefined) {
+        throw new Error(PLUGIN_ID + ": the slot registry service is missing — this plugin cannot render without it");
       }
       const settings = config ?? {};
       const slot = typeof settings.slot === "string" && settings.slot !== "" ? settings.slot : DEFAULT_SLOT;
-      const store = createStore({
-        id: PLUGIN_ID,
-        remoteSources,
-        hostSources,
-        remote: ctx.remote,
-        metadata,
-        fetchImpl: (...args) => fetch(...args),
-        refreshMs: settings.refreshMs,
-        fallbackRefreshMs: DEFAULT_REFRESH_MS,
-        timers: { setInterval, clearInterval },
-        log: (...args) => console.info(...args),
-      });
-      ctx.effect(() => () => store.dispose(), "route-balance: polling store lifetime");
+      let store;
+      try {
+        store = createStore({
+          id: PLUGIN_ID,
+          remoteSources,
+          hostSources,
+          remote: remoteFacade(ctx),
+          metadata,
+          fetchImpl: (...args) => globalThis.fetch(...args),
+          refreshMs: settings.refreshMs,
+          fallbackRefreshMs: DEFAULT_REFRESH_MS,
+          timers: { setInterval: (...args) => globalThis.setInterval(...args), clearInterval: (...args) => globalThis.clearInterval(...args) },
+          log: (...args) => globalThis.console.info(...args),
+        });
+        ctx.effect(() => () => store.dispose(), "route-balance: polling store lifetime");
+      } catch (error) {
+        store = brokenStore("插件启动失败：" + String(error?.message ?? error));
+      }
       ctx.slots.inject(slot, () => ctx.slots.register({
         name: slot,
         id: "route-balance",

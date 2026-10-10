@@ -1,6 +1,6 @@
 {
   "name": "dsh-route-balance",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Display configured API-route balances and ChatGPT/Codex quota in the DeepSeek Harness sidebar through an authenticated local route.",
   "keywords": ["deepseek-harness", "dsh", "dsh-plugin", "balance", "quota", "sidebar"],
   "license": "MIT",
@@ -28,7 +28,7 @@
   "peerDependenciesMeta": { "@deepseek-ai/cordis": { "optional": true }, "react": { "optional": true } },
   "dsh": {
     "bundle": { "patch": "cordis.patch.yml" },
-    "client": { "inject": ["@deepseek-ai/dsh-client-ui-renderer"], "platform": "web" },
+    "client": { "inject": ["@deepseek-ai/dsh-client-connection", "@deepseek-ai/dsh-client-ui-renderer"], "platform": "web", "immediately": true },
     "engines": { "dsh": ">=0.2.0-rc.2" }
   }
 }

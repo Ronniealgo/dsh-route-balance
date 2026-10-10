@@ -226,8 +226,9 @@ test('widget: a missing account Remote still activates and shows the host routes
   const environment = createEnvironment();
   loadBundle(environment, { source: generateBundleSource() });
   const api = environment.factory();
-  assert.deepEqual(api.inject, ['slots', 'remote'], 'the account namespace is not a hard dependency');
+  assert.deepEqual(api.inject, ['slots'], 'no service beyond the slot registry may be a hard dependency');
   assert.ok(!api.inject.includes('remote.account'));
+  assert.ok(!api.inject.includes('remote'), 'a service the shell may not provide must not gate activation');
 
   const fake = createFakeContext({});
   api.apply(fake.context, {});
@@ -250,8 +251,8 @@ test('widget: a missing account Remote still activates and shows the host routes
     const button = view.current.nodes.find((node) => node.tagName === 'BUTTON');
     assert.equal(button.attributes['data-state'], 'ready');
     assert.equal(view.current.text.join(''), 'GPT 剩 0%', 'the API route renders while the account source is unavailable');
-    assert.match(button.attributes.title, /DeepSeek 账号：/);
-    assert.match(button.attributes.title, /此配置未提供账号服务/, 'the missing account is labelled, not silent');
+    assert.match(button.attributes.title, /ChatGPT 订阅：/, 'ready host routes are in the tooltip');
+    assert.doesNotMatch(button.attributes.title, /此配置未提供账号服务/, 'the simplified tooltip omits error details');
     for (const cleanup of view.current.cleanups) cleanup();
   } finally {
     globalThis.fetch = originalFetch;
@@ -260,7 +261,59 @@ test('widget: a missing account Remote still activates and shows the host routes
 });
 
 // ---------------------------------------------------------------------------
-// 3. The generated component must also exist as the shipped artifact.
+// 3. Fail visible: the shell blanks a slot entry whose component throws, so the
+//    control must degrade to a readable line instead of disappearing.
+// ---------------------------------------------------------------------------
+
+test('widget: a malformed reading shows one readable line instead of blanking the slot', async () => {
+  const environment = createEnvironment();
+  loadBundle(environment, { source: generateBundleSource() });
+  const api = environment.factory();
+  const malformed = {
+    getSnapshot: () => ({ kind: 'ready', loading: false, entries: [null] }),
+    subscribe: () => () => {},
+    refresh: async () => {},
+    dispose: () => {},
+  };
+  const session = createHookSession(environment.react);
+  const view = renderWithHooks(environment.react.createElement(api.RouteBalance, { store: malformed }), environment.react, session);
+  const button = view.nodes.find((node) => node.tagName === 'BUTTON');
+  assert.ok(button, 'the control still renders');
+  assert.equal(view.text.join(''), '余额显示出错');
+  assert.ok(button.attributes.title.length > 0, 'the tooltip shows something readable');
+  for (const cleanup of view.cleanups) cleanup();
+});
+
+test('widget: a store that throws on read still renders', async () => {
+  const environment = createEnvironment();
+  loadBundle(environment, { source: generateBundleSource() });
+  const api = environment.factory();
+  const broken = {
+    getSnapshot() { throw new Error('boom'); },
+    subscribe() { return () => {}; },
+    refresh() { return Promise.resolve(); },
+    dispose() {},
+  };
+  const session = createHookSession(environment.react);
+  const view = renderWithHooks(environment.react.createElement(api.RouteBalance, { store: broken }), environment.react, session);
+  const button = view.nodes.find((node) => node.tagName === 'BUTTON');
+  assert.ok(button, 'the control still renders');
+  assert.ok(view.text.join('').length > 0, 'the control says something readable');
+  for (const cleanup of view.cleanups) cleanup();
+});
+
+test('apply: a context without the Remote service still registers the control', async () => {
+  const environment = createEnvironment();
+  loadBundle(environment, { source: generateBundleSource() });
+  const api = environment.factory();
+  const fake = createFakeContext({});
+  api.apply(fake.context, {});
+  assert.equal(fake.registrations.length, 1, 'the slot registration happens without any Remote namespace');
+  fake.dispose();
+});
+
+// ---------------------------------------------------------------------------
+// 4. The generated component must also exist as the shipped artifact.
 // ---------------------------------------------------------------------------
 
 const inMemory = generateBundleSource();

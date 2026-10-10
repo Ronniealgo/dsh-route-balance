@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.6.3] - 2026-10-10
+
+### Browser-half activation repair (the sidebar figure never appeared)
+
+The published 0.6.2 shipped a browser half that was loaded by the shell but never activated, so the sidebar seat stayed empty and nothing was logged. A real desktop client showed an empty seat and a clean browser console; the bundle file itself was served and compiled.
+
+- Declare `dsh.client.immediately` in `package.json`. The shipped UI-plugin contract carries this flag (the harness's own authoring template sets it for slot decorations); without it the browser half is not activated at page start.
+- Stop hard-requiring the `remote` client service. The bundle now declares `inject = ["slots"]` only, and resolves the Remote namespace opportunistically per read. A client plugin whose injected service never appears stays pending forever and silently, which is the failure mode this release exists to remove.
+- Order activation against `@deepseek-ai/dsh-client-connection` in `dsh.client.inject`, so the Remote namespace is provided before this bundle applies when the profile has it.
+- Fail visible instead of blank. The shell replaces a slot entry whose component throws with an empty placeholder and logs it only on the browser console, so the control now computes every derived value defensively and renders one readable line ("余额显示出错" with the reason) instead of disappearing; a store that cannot be constructed at all reports "插件启动失败" through the same seat.
+- Refresh is invoked defensively: a rejected refresh promise is caught and reported through the snapshot rather than surfacing as an unhandled rejection.
+
+### Verification boundary
+
+Activation was reproduced against the operator's real desktop profile; the entry renders only after a client restart. The 0.6.2 limitations that still apply: no real-browser visual validation in CI, no npm publication, and the local PowerShell execution-policy limit that fails the two Windows entry-point installer tests.
+
 ## [0.6.2] - 2026-10-09
 
 ### Security and correctness repairs

@@ -8,7 +8,7 @@
 
 > **实验候选（pre-release）**：公开仓库是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.2 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化。徽章只挂 DSH Market 官方收录标识（由市场提供），不挂其它未经核实的徽章。
 >
-> **上架状态（2026-10-10 核对）**：已收录进 DSH 插件市场 —— 市场首页 <https://dsh.market/>，本插件页 <https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance>。收录提交单 [issue 218](https://github.com/2BingLing/dsh-market/issues/218) 已由市场按“已收录”办结（2026-10-10）。市场数据来自社区目录 [api.dshmk.com](https://api.dshmk.com/)，该目录把本仓库标为 `verified`（等级 4：结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录和“已验证”都是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**。
+> **上架状态（2026-10-10 核对）**：已收录进 DSH 插件市场 —— 市场首页 <https://dsh.market/>，本插件页 <https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance>。收录提交单 [issue 218](https://github.com/2BingLing/dsh-market/issues/218) 已由市场按“已收录”办结（2026-10-10）。另有独立的社区目录 [api.dshmk.com](https://api.dshmk.com/)（自动扫描 + 校验服务，与上面的市场是两套数据）也收录本仓库，并把它标为 `verified`（等级 4：结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录和“已验证”都是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**。
 
 示例（演示数字，不是本轮真实账户读数）：
 
@@ -165,7 +165,7 @@ node tools/run-tests.mjs
 - **已验证**：160 项测试在 Windows / Node 24 的隔离环境通过，覆盖官方库、合成认证与真实合成进程；这些测试不触真实 GUI，不触真实供应商账户。
 - **实机范围仍未验证**：真实浏览器图形界面渲染、真实 DSH 安装与真实供应商账户读数尚未验证。
 - **跨平台结果单独看 CI**：CI 文件定义 Windows 与 Ubuntu × Node 20/22/24 矩阵；当前源码 SHA 的执行结果请查看 [GitHub Actions](https://github.com/Ronniealgo/dsh-route-balance/actions)。本地 Windows/Node 24 的通过不替代其它环境的结果。
-- **市场收录**：已收录进 [DSH 插件市场](https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance)（数据源为社区目录 [api.dshmk.com](https://api.dshmk.com/)；2026-10-10 核对时该目录把本仓库标为 `verified` 等级 4，结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录与“已验证”是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**；市场页面的实际显示以市场为准。
+- **市场收录**：已收录进 [DSH 插件市场](https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance)（另有独立的社区目录 [api.dshmk.com](https://api.dshmk.com/) 也收录本仓库，2026-10-10 核对时标为 `verified` 等级 4，结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录与“已验证”是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**；市场页面的实际显示以市场为准。
 
 ## 许可证
 

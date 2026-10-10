@@ -2,11 +2,11 @@
 
 [![DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-zh.svg)](https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance)
 
-`dsh-route-balance` · DeepSeek Harness（DSH）侧边栏插件 · **0.6.2 实验版**
+`dsh-route-balance` · DeepSeek Harness（DSH）侧边栏插件 · **0.6.3 实验版**
 
 在 DSH 侧边栏直接显示各条 API 路线（模型厂商与中转站）的账户余额，以及 ChatGPT/Codex 订阅的剩余额度。
 
-> **实验候选（pre-release）**：公开仓库是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.2 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化。徽章只挂 DSH Market 官方收录标识（由市场提供），不挂其它未经核实的徽章。
+> **实验候选（pre-release）**：公开仓库是 <https://github.com/Ronniealgo/dsh-route-balance>，0.6.3 在 GitHub Release 上按 **pre-release** 标记。上传与打标签的状态以该 GitHub 仓库为准，本文不代为宣称“已经发布完成”。接口、配置默认值和 Codex 接触面仍可能在后续实验版里变化。徽章只挂 DSH Market 官方收录标识（由市场提供），不挂其它未经核实的徽章。
 >
 > **上架状态（2026-10-10 核对）**：已收录进 DSH 插件市场 —— 市场首页 <https://dsh.market/>，本插件页 <https://dsh.market/?plugin=Ronniealgo%2Fdsh-route-balance>。收录提交单 [issue 218](https://github.com/2BingLing/dsh-market/issues/218) 已由市场按“已收录”办结（2026-10-10）。另有独立的社区目录 [api.dshmk.com](https://api.dshmk.com/)（自动扫描 + 校验服务，与上面的市场是两套数据）也收录本仓库，并把它标为 `verified`（等级 4：结构与沙箱检查通过，核对的提交是 `9dd4cc9`）。收录和“已验证”都是自动检测结果，**不等于安全审计，也不代表 DSH 官方背书**。
 
@@ -22,7 +22,7 @@
 
 - Node.js 20 或以上；插件没有运行时 npm 依赖。
 - DSH 至少 0.2.0-rc.2，并提供 Connection 的认证 Fetch 注册接口。版本字段不是未来版本兼容性的保证。
-- 公开仓库来源是 <https://github.com/Ronniealgo/dsh-route-balance>；0.6.2 是 GitHub pre-release 实验版，安装推荐固定版本，不要跟随浮动的分支名。
+- 公开仓库来源是 <https://github.com/Ronniealgo/dsh-route-balance>；0.6.3 是 GitHub pre-release 实验版，安装推荐固定版本，不要跟随浮动的分支名。
 - **npm 包尚未发布**：当前按 GitHub 固定版本安装，不要按 npm 包名安装。DSH 的包管理器仍可能访问 npm 来解析所选 profile 的依赖。
 - 文档里的安装命令、市场入口都不会自动装到你的机器上：命令要你自己在终端执行，市场“添加插件”也只是在插件页粘贴 spec 并确认信任。
 - 本版没有安装到用户正在运行的 DSH，没有改真实凭据或重启实例。离线组件渲染测试不是实际浏览器视觉验收。
@@ -42,21 +42,21 @@
 #### DSH 桌面版
 
 ```bash
-dsh plugin --profile desktop add github:Ronniealgo/dsh-route-balance#v0.6.2
+dsh plugin --profile desktop add github:Ronniealgo/dsh-route-balance#v0.6.3
 ```
 
 #### DSH Web
 
 ```bash
-dsh plugin --profile web add github:Ronniealgo/dsh-route-balance#v0.6.2
+dsh plugin --profile web add github:Ronniealgo/dsh-route-balance#v0.6.3
 ```
 
-两条命令只选择 profile，不影响插件行为；不确定自己是哪一类就先看 DSH 的 profile 名称再执行。`#v0.6.2` 是固定标签，换版本时必须显式改写。
+两条命令只选择 profile，不影响插件行为；不确定自己是哪一类就先看 DSH 的 profile 名称再执行。`#v0.6.3` 是固定标签，换版本时必须显式改写。
 
 也可以在 DSH 的“插件 → 添加插件”中粘贴下面的 GitHub 来源，按界面提示确认信任并点击安装：
 
 ```text
-github:Ronniealgo/dsh-route-balance#v0.6.2
+github:Ronniealgo/dsh-route-balance#v0.6.3
 ```
 
 勾选信任本身不执行安装；点击安装后，DSH 会下载插件并写入你选择的 profile。安装或更新后按界面提示重启 DSH、刷新页面，不会替你安装到其它 profile。

@@ -26,5 +26,7 @@ jobs:
         run: npm run check
       - name: Guarded offline regression, including actual pack and import
         run: npm test
+      - name: Real-timer loopback stability (synthetic suppliers)
+        run: npm run test:soak -- --duration-ms 2000
       - name: Syntax
         run: node --check lib/client.js && node --check lib/index.js && node --check lib/codex.js

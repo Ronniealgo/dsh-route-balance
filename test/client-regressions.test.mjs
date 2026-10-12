@@ -211,14 +211,14 @@ test('widget: an invalid ready payload never shows 0%, 100% or ready', async () 
   assert.equal(view.text, '读取失败');
   assert.doesNotMatch(view.text, /0%|100%/);
   assert.doesNotMatch(view.title, /无余额/, 'a failed reading is not silently a zero balance');
-  assert.equal(view.title, '无可用余额', 'error details are not in the simplified tooltip');
+  assert.equal(view.title, 'Empty：暂不可用\n\nBlank：暂不可用\n\nJunk：暂不可用', 'route identities remain visible without technical error details');
   view.dispose();
 });
 
 test('widget: an expired browser session is stated in the tooltip', async () => {
   const view = await renderHost([], async () => jsonResponse({ error: 'unauthorized' }, 401));
   assert.equal(view.state, 'failed');
-  assert.equal(view.title, '无可用余额', 'error details are not in the simplified tooltip');
+  assert.equal(view.title, 'DSH 主机：需重新登录或配置', 'authentication loss is actionable, not a fabricated zero or a hidden row');
   view.dispose();
 });
 

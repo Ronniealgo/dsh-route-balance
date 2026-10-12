@@ -278,7 +278,7 @@ test('registry: polls on the first subscriber, shares one pass, stops on the las
   const store = registry.createStore({ id: 't', remoteSources: [slow], hostSources: [], remote: {}, metadata: () => ({}), refreshMs: 60000, timers, now: () => 0, log: () => {} });
   const unsubscribe = store.subscribe(() => {});
   assert.equal(intervals.size, 1, 'the store starts polling for its first subscriber');
-  await new Promise((resolve) => setImmediate(resolve));
+  await store.refresh(); // Wait for the initial bounded cycle, not one arbitrary event-loop tick.
   assert.equal(reads, 1);
 
   await Promise.all([store.refresh(), store.refresh()]);
@@ -377,7 +377,7 @@ test('bundle: the account source maps the live account answers', async () => {
   const notReady = await source.read({
     remote: { account: { getState: async () => ({ ok: true, value: LIVE_STATE }), getBalance: async () => ({ ok: true, value: { status: 'failed' } }) } },
   });
-  assert.equal(notReady.kind, 'unavailable', 'a null or failed platform answer is never a zero balance');
+  assert.equal(notReady.kind, 'failed', 'a missing reading is transient failure, never a zero or a sign-out');
 });
 
 test('bundle: registers the sidebar slot and renders every readable route', async () => {

@@ -46,7 +46,7 @@ const previous = fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : null;
 // Guards: both modules must have been inlined, and no marker may survive.
 const guards = [
   ['function formatAmount(text)', 'core module'],
-  ['function createStore(deps)', 'registry module'],
+  ['function createStore(', 'registry module'],
   ['function mergeEntries(groups)', 'registry merge'],
   ['const accountSource = {', 'account source'],
 ];
@@ -71,9 +71,9 @@ if (check) {
   console.log('lib/client.js is up to date');
 } else {
   if (previous === output) {
-    console.log(`lib/client.js already current (${output.length} bytes, v${pkg.version})`);
+    console.log(`lib/client.js already current (${Buffer.byteLength(output, 'utf8')} bytes, v${pkg.version})`);
   } else {
     fs.writeFileSync(target, output);
-    console.log(`wrote lib/client.js (${output.length} bytes, ${pkg.name}@${pkg.version})`);
+    console.log(`wrote lib/client.js (${Buffer.byteLength(output, 'utf8')} bytes, ${pkg.name}@${pkg.version})`);
   }
 }

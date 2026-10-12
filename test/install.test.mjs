@@ -5,7 +5,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { installPackage } from '../tools/install-state.mjs';
 import { parsePatch } from '../tools/patch-check.mjs';
-import { ROOT, profile } from './helpers.mjs';
+import { ROOT, profile, temporary } from './helpers.mjs';
 const base = '- insert:\n    - id: unrelated\n      name: "example"\n';
 const cases = { LF: base, CRLF: base.replaceAll('\n', '\r\n'), BOM: '\uFEFF' + base, noFinalNewline: base.trimEnd(), trailingBlank: base + '\n\n', trailingComment: base + '# KEEP THIS COMMENT\n', chinese: '# 中文注释\n' + base + '# 尾部用户注释', unrelatedName: base + '# route-balance is only a comment\n' };
 for (const [name, text] of Object.entries(cases)) test(`F6 exact bytes round-trip: ${name}`, (t) => {
@@ -69,14 +69,24 @@ test('a missing user-owned junction recreated by the installer becomes owned and
   assert.equal(fs.readFileSync(f.patch, 'utf8'), base);
 });
 for (const shell of ['powershell.exe', 'pwsh']) test(`Windows entry point ${shell}: byte fixtures and exit codes`, { skip: process.platform !== 'win32', timeout: 60000 }, (t) => {
+  const probe = spawnSync(shell, ['-NoProfile', '-NonInteractive', '-Command', '$PSVersionTable.PSVersion.ToString()'], { encoding: 'utf8', timeout: 5000, windowsHide: true });
+  if (probe.error?.code === 'ENOENT') { t.skip(`${shell} is not installed in this environment`); return; }
+  assert.equal(probe.status, 0, `PowerShell probe: ${probe.error?.code ?? ''} ${probe.stderr}`);
+  // Run the exact installer bytes in a local, test-owned package. Do not lower
+  // the operator's execution policy or depend on a checkout's Internet-zone tag.
+  const staged = temporary(t, 'installer-entry-');
+  for (const relative of ['install.ps1', 'package.json', 'tools/install-state.mjs', 'tools/patch-check.mjs']) {
+    const bytes = fs.readFileSync(path.join(ROOT, relative)), target = path.join(staged, relative);
+    fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, bytes);
+    assert.ok(fs.readFileSync(target).equals(bytes), `exact installer package bytes: ${relative}`);
+  }
+  const run = (home, extra = []) => spawnSync(shell, ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned', '-File', path.join(staged, 'install.ps1'), '-DshHome', home, ...extra], { cwd: staged, encoding: 'utf8', timeout: 15000, windowsHide: true, env: { ...process.env, DSH_ROUTE_BALANCE_TEST: '1' } });
   for (const [name, text] of Object.entries(cases)) {
     const f = profile(t, Buffer.from(text));
-    const run = (extra = []) => spawnSync(shell, ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned', '-File', path.join(ROOT, 'install.ps1'), '-DshHome', f.home, ...extra], { cwd: ROOT, encoding: 'utf8', timeout: 15000, windowsHide: true, env: { ...process.env, DSH_ROUTE_BALANCE_TEST: '1' } });
-    const install = run(); assert.equal(install.status, 0, `${name}: ${install.stderr} ${install.stdout}`);
-    const remove = run(['-Uninstall']); assert.equal(remove.status, 0, remove.stderr);
+    const install = run(f.home); assert.equal(install.status, 0, `${name}: ${install.error?.code ?? ''} ${install.stderr} ${install.stdout}`);
+    const remove = run(f.home, ['-Uninstall']); assert.equal(remove.status, 0, remove.stderr);
     assert.equal(fs.readFileSync(f.patch, 'utf8'), text, name);
   }
-  const f = profile(t, Buffer.from('[]\n'));
-  const refused = spawnSync(shell, ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'RemoteSigned', '-File', path.join(ROOT, 'install.ps1'), '-DshHome', f.home], { encoding: 'utf8', timeout: 15000, env: { ...process.env, DSH_ROUTE_BALANCE_TEST: '1' } });
+  const f = profile(t, Buffer.from('[]\n')), refused = run(f.home);
   assert.equal(refused.status, 3); assert.equal(fs.readFileSync(f.patch, 'utf8'), '[]\n');
 });

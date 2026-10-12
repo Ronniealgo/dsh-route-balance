@@ -1,20 +1,33 @@
 # Changelog
 
-## [0.6.3] - 2026-10-10
+## [0.6.4] - 2026-10-12
 
-### Browser-half activation repair (the sidebar figure never appeared)
+### Long-running balance stability
 
-The published 0.6.2 shipped a browser half that was loaded by the shell but never activated, so the sidebar seat stayed empty and nothing was logged. A real desktop client showed an empty seat and a clean browser console; the bundle file itself was served and compiled.
-
-- Declare `dsh.client.immediately` in `package.json`. The shipped UI-plugin contract carries this flag (the harness's own authoring template sets it for slot decorations); without it the browser half is not activated at page start.
-- Stop hard-requiring the `remote` client service. The bundle now declares `inject = ["slots"]` only, and resolves the Remote namespace opportunistically per read. A client plugin whose injected service never appears stays pending forever and silently, which is the failure mode this release exists to remove.
-- Order activation against `@deepseek-ai/dsh-client-connection` in `dsh.client.inject`, so the Remote namespace is provided before this bundle applies when the profile has it.
-- Fail visible instead of blank. The shell replaces a slot entry whose component throws with an empty placeholder and logs it only on the browser console, so the control now computes every derived value defensively and renders one readable line ("余额显示出错" with the reason) instead of disappearing; a store that cannot be constructed at all reports "插件启动失败" through the same seat.
-- Refresh is invoked defensively: a rejected refresh promise is caught and reported through the snapshot rather than surfacing as an unhandled rejection.
+- Keep a supplier's last successful balance after transient network errors, HTTP failures or timeouts; mark it `（上次）` instead of removing its row. A successful refresh clears the mark. Old money readings expire after 24 hours by default and are never presented as fresh.
+- Scope host caches to the current credential and activation. Recheck credentials even inside the short cache window. Missing, rejected, malformed or rotated keys, authentication failures and removed routes cannot resurrect another identity's balance. Only unrelated random generation identifiers cross the host boundary.
+- Bound every browser source independently, including readers that ignore AbortSignal. Publish healthy sources as they finish; one hanging source cannot freeze all later refreshes.
+- Coalesce manual/timer refreshes, isolate throwing subscribers and stop requests on pause/unsubscribe/disposal. Hidden or offline pages pause; visibility, focus or reconnection triggers catch-up.
+- Preserve original quota success timestamps across host/browser boundaries, bound the background quota reader and expire excessively old quota readings. MiMo endpoint probes now distinguish transient failure from authentication loss or unsupported endpoints.
+- Keep one amount per tooltip line and one blank line between suppliers. Unavailable configured routes show a short status rather than silently disappearing. Native browser timer receivers retain the 0.6.3 fix.
+- Add synthetic identity, cancellation, recovery, expiry and 600-cycle/50-virtual-hour regressions, plus a real-timer/loopback-HTTP soak tool. Installer entry tests stage exact script bytes without lowering system execution policy; absent PowerShell 7 is explicitly unverified.
 
 ### Verification boundary
 
-Activation was reproduced against the operator's real desktop profile; the entry renders only after a client restart. The 0.6.2 limitations that still apply: no real-browser visual validation in CI, no npm publication, and the local PowerShell execution-policy limit that fails the two Windows entry-point installer tests.
+See [RELEASE-VERIFICATION.zh-CN.md](RELEASE-VERIFICATION.zh-CN.md) for executed checks. Synthetic long-run tests are not proof of 50 hours of real account uptime or a visual check of the operator's running GUI. GitHub Actions and actual installation are reported separately. The package remains a pre-release with no runtime dependencies.
+
+## [0.6.3] - 2026-10-10
+
+### Sidebar repair and compact display
+
+- Fix the confirmed desktop exception `TypeError: Illegal invocation` by calling browser timers with their global receiver. Use late-bound wrappers so fetch can be mocked without capturing an old implementation.
+- Require only the slot service; account Remote is optional and resolved on each read. Render host balances even where the account service is absent.
+- Keep defensive rendering and catch rejected refreshes. Use a compact control and one balance per tooltip line, blank-separated by supplier, with provider names.
+- Keep the `immediately` activation declaration and client ordering. Earlier text claiming that a missing activation flag was the proven root cause was inaccurate; the observed timer-receiver exception was the confirmed defect.
+
+### Verification boundary
+
+The operator confirmed the repaired sidebar displayed balances. This was not automated real-browser visual testing. Historical suite counts and environment failures do not establish acceptance for later versions; each release must be retested.
 
 ## [0.6.2] - 2026-10-09
 
